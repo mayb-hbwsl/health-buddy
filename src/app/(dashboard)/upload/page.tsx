@@ -13,9 +13,12 @@ export default async function UploadPage() {
     redirect('/auth/login');
   }
 
-  const recentEntries = await db.healthEntry.findMany({
+  const entries = await db.healthEntry.findMany({
     where: { userId: session.user.id }
   });
+
+  // Sort entries by date descending (newest first)
+  const sortedEntries = [...entries].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
 
   return (
     <div className={styles.upload}>
@@ -29,13 +32,18 @@ export default async function UploadPage() {
       <div className={styles.historySection} style={{ marginTop: '40px' }}>
         <h2 style={{ marginBottom: '20px' }}>Recent Activity</h2>
         <div className={styles.historyList}>
-          {recentEntries.length === 0 ? (
-            <p style={{ color: 'var(--text-secondary)' }}>No recent activity to show.</p>
+          {sortedEntries.length === 0 ? (
+            <p style={{ color: 'var(--text-secondary)' }}>No recent activity to show. Try uploading or logging a metric!</p>
           ) : (
-            recentEntries.slice(0, 5).map((entry) => (
+            sortedEntries.slice(0, 10).map((entry) => (
               <div key={entry.id} className={styles.historyItem}>
-                <span>{entry.type}</span>
-                <strong>{entry.value}</strong>
+                <span>{entry.type === "SUGAR" ? "Blood Sugar" : entry.type}</span>
+                <strong>
+                  {entry.value} 
+                  <span style={{ fontSize: '0.8rem', marginLeft: '4px', opacity: 0.7 }}>
+                    {entry.type === "SUGAR" ? "mg/dL" : (entry.type === "HBA1C" ? "%" : "kg")}
+                  </span>
+                </strong>
                 <span className={styles.historyDate}>{new Date(entry.date).toLocaleDateString()}</span>
               </div>
             ))
