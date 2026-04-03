@@ -10,6 +10,8 @@ export interface User {
   age?: number | null;
   weight?: number | null;
   condition?: string | null;
+  lastPeriodDate?: string | null;
+  cycleLength?: number | null;
 }
 
 export interface HealthEntry {
@@ -37,6 +39,8 @@ if (!globalForDb.mockUsers) {
       age: 21,
       weight: 72,
       condition: "None",
+      lastPeriodDate: null,
+      cycleLength: 28,
     }
   ];
 }

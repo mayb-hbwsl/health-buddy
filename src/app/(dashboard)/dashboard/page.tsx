@@ -6,6 +6,7 @@ import { getServerSession } from 'next-auth/next';
 import { authOptions } from "@/lib/auth";
 import { redirect } from 'next/navigation';
 import HealthChart from '@/components/HealthChart';
+import CycleTracker from '@/components/CycleTracker.client';
 
 export default async function Dashboard() {
   const session = await getServerSession(authOptions);
@@ -24,6 +25,8 @@ export default async function Dashboard() {
 
   // Sort entries by date descending
   const sortedEntries = [...entries].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+  console.log(sortedEntries);
+  
 
   const latestSugar = sortedEntries.find(e => e.type === "SUGAR");
   const latestWeight = sortedEntries.find(e => e.type === "WEIGHT");
@@ -85,9 +88,11 @@ export default async function Dashboard() {
           </div>
         </Card>
 
-        <Card title="Next Cycle (Est.)" className={styles.statCard}>
-          <div className={styles.statValue}>10 <span className={styles.unit}>Days</span></div>
-          <div className={styles.status}>ON TRACK</div>
+        <Card title="Cycle Tracker" className={styles.statCard}>
+          <CycleTracker
+            lastPeriodDate={user?.lastPeriodDate ?? null}
+            cycleLength={user?.cycleLength ?? 28}
+          />
         </Card>
       </div>
 
