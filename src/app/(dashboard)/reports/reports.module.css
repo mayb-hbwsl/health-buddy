@@ -1,0 +1,113 @@
+.reports {
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+.header {
+  margin-bottom: 3rem;
+}
+
+.header h1 {
+  font-size: 2.25rem;
+  margin-bottom: 0.5rem;
+}
+
+.header p {
+  color: var(--text-secondary);
+}
+
+.reportsList {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.reportCard {
+  padding: 0;
+}
+
+.tableWrapper {
+  overflow-x: auto;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.table th {
+  text-align: left;
+  padding: 1rem 1.5rem;
+  background: rgba(255, 255, 255, 0.05);
+  border-bottom: 1px solid var(--border);
+  color: var(--text-secondary);
+  font-weight: 600;
+  font-size: 0.85rem;
+  text-transform: uppercase;
+}
+
+.table td {
+  padding: 1.25rem 1.5rem;
+  border-bottom: 1px solid var(--border);
+  font-size: 0.95rem;
+}
+
+.table tr:last-child td {
+  border-bottom: none;
+}
+
+.statusBadge {
+  display: inline-block;
+  padding: 0.25rem 0.75rem;
+  border-radius: 20px;
+  font-size: 0.75rem;
+  font-weight: 700;
+}
+
+.normal {
+  background: var(--success-light);
+  color: var(--success);
+}
+
+.high {
+  background: rgba(239, 68, 68, 0.1);
+  color: var(--danger);
+}
+
+.observation {
+  padding: 0.5rem;
+}
+
+.obsHeader {
+  display: flex;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.obsIcon {
+  font-size: 1.5rem;
+  margin-right: 1rem;
+}
+
+.obsTitle {
+  font-weight: 700;
+  font-size: 1.1rem;
+  margin-right: 1rem;
+}
+
+.obsDate {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+}
+
+.obsText {
+  color: var(--text-secondary);
+  line-height: 1.6;
+}
+
+.empty {
+  text-align: center;
+  padding: 3rem;
+  color: var(--text-secondary);
+  font-style: italic;
+}

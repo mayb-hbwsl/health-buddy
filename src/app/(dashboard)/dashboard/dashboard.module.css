@@ -1,0 +1,144 @@
+.dashboard {
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+.header {
+  margin-bottom: 3rem;
+}
+
+.header h1 {
+  font-size: 2.25rem;
+  margin-bottom: 0.5rem;
+}
+
+.header p {
+  color: var(--text-secondary);
+}
+
+.statsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.statCard {
+  transition: all 0.2s ease;
+}
+
+.statValue {
+  font-size: 2.5rem;
+  font-weight: 800;
+  margin: 0.5rem 0;
+  font-family: var(--font-outfit);
+}
+
+.unit {
+  font-size: 1rem;
+  color: var(--text-secondary);
+  font-weight: 500;
+}
+
+.status {
+  display: inline-block;
+  padding: 0.25rem 0.75rem;
+  border-radius: 20px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--border);
+}
+
+.normal {
+  color: var(--success);
+  background: var(--success-light);
+  border-color: rgba(16, 185, 129, 0.2);
+}
+
+.chartSection {
+  margin-bottom: 2rem;
+}
+
+.placeholderChart {
+  background: linear-gradient(135deg, rgba(99, 102, 241, 0.05) 0%, rgba(236, 72, 153, 0.05) 100%);
+  border: 1px dashed var(--border);
+  height: 300px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.chartMsg {
+  color: var(--text-secondary);
+  font-style: italic;
+}
+
+.bottomGrid {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 1.5rem;
+}
+
+.activityList {
+  list-style: none;
+}
+
+.activityItem {
+  display: flex;
+  align-items: center;
+  padding: 1rem 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.activityItem:last-child {
+  border-bottom: none;
+}
+
+.activityIcon {
+  font-size: 1.25rem;
+  background: rgba(255, 255, 255, 0.05);
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 10px;
+  margin-right: 1rem;
+}
+
+.activityTitle {
+  font-weight: 600;
+  font-size: 0.95rem;
+}
+
+.activityTime {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+}
+
+.recommendation {
+  display: flex;
+  padding: 1rem;
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: 12px;
+  margin-bottom: 1rem;
+}
+
+.recIcon {
+  font-size: 1.5rem;
+  margin-right: 1rem;
+}
+
+.recText {
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  line-height: 1.4;
+}
+
+@media (max-width: 1024px) {
+  .bottomGrid {
+    grid-template-columns: 1fr;
+  }
+}
