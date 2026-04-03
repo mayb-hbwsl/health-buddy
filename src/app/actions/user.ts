@@ -36,15 +36,24 @@ export async function saveHealthEntry(formData: FormData) {
     if (!session?.user?.id) return { error: "You must be logged in" };
 
     const typeField = formData.get("type") as string;
-    const type = typeField?.toUpperCase()?.includes("SUGAR") ? "SUGAR" : "WEIGHT";
     const value = formData.get("value") as string;
     const dateInput = formData.get("date") as string;
     const date = dateInput ? new Date(dateInput) : new Date();
 
-    // Basic logic for "HIGH" sugar
+    let type = "WEIGHT";
+    if (typeField?.toUpperCase()?.includes("SUGAR")) type = "SUGAR";
+    else if (typeField?.toUpperCase()?.includes("HBA1C")) type = "HBA1C";
+
+    // Basic logic for health status
     let status = "NORMAL";
-    if (type === "SUGAR" && parseFloat(value) > 140) {
+    const numericValue = parseFloat(value);
+
+    if (type === "SUGAR" && numericValue > 140) {
       status = "HIGH";
+    } else if (type === "HBA1C") {
+      if (numericValue > 6.4) status = "DIABETIC";
+      else if (numericValue >= 5.7) status = "PRE-DIABETIC";
+      else status = "NORMAL";
     }
 
     await db.healthEntry.create({
