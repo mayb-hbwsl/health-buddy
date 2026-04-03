@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { signOut, useSession } from 'next-auth/react';
 import styles from './layout.module.css';
+import ChatWidget from '@/components/ChatWidget.client';
 
 interface DashboardLayoutProps {
   children: React.ReactNode;
@@ -66,6 +67,7 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
           </div>
         </div>
       </main>
+      <ChatWidget />
     </div>
   );
 }
