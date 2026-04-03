@@ -57,9 +57,18 @@ export async function saveHealthEntry(formData: FormData) {
       },
     });
 
+    // Sync base user weight if type is WEIGHT
+    if (type === "WEIGHT") {
+      await db.user.update({
+        where: { id: session.user.id },
+        data: { weight: parseFloat(value) },
+      });
+    }
+
     revalidatePath("/dashboard");
     revalidatePath("/reports");
     revalidatePath("/upload");
+    revalidatePath("/profile");
     return { success: true };
   } catch (error: any) {
     console.error("Health entry error:", error);

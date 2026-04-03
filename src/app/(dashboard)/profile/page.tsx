@@ -18,6 +18,16 @@ export default async function Profile() {
     where: { id: session.user.id }
   });
 
+  const entries = await db.healthEntry.findMany({
+    where: { userId: session.user.id }
+  });
+
+  const latestWeightEntry = [...entries]
+    .filter(e => e.type === "WEIGHT")
+    .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())[0];
+
+  const currentWeight = latestWeightEntry ? latestWeightEntry.value : (user?.weight || '--');
+
   return (
     <div className={styles.profile}>
       <header className={styles.header}>
@@ -51,7 +61,7 @@ export default async function Profile() {
               </div>
               <div className={styles.detailItem}>
                 <span className={styles.detailLabel}>Weight</span>
-                <span className={styles.detailValue}>{user?.weight || '--'} kg</span>
+                <span className={styles.detailValue}>{currentWeight} kg</span>
               </div>
               <div className={styles.detailItem}>
                 <span className={styles.detailLabel}>Primary Condition</span>
