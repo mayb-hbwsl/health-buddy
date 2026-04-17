@@ -27,6 +27,7 @@ export interface RiskRequest {
   age?: number | null;
   weight?: number | null;
   height_cm?: number | null;
+  gender?: string | null;
 }
 
 export interface RiskResult {

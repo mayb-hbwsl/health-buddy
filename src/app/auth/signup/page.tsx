@@ -52,9 +52,34 @@ const Signup: React.FC = () => {
               name="name"
               type="text" 
               className={styles.input} 
-              placeholder="Anayni" 
+              placeholder="Full Name" 
               required
             />
+          </div>
+
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
+            <div className={styles.formGroup}>
+              <label className={styles.label}>Height (cm)</label>
+              <input 
+                name="height"
+                type="number" 
+                className={styles.input} 
+                placeholder="165" 
+                min="100"
+                max="250"
+                required
+              />
+            </div>
+
+            <div className={styles.formGroup}>
+              <label className={styles.label}>Gender</label>
+              <select name="gender" className={styles.input} required>
+                <option value="">Select</option>
+                <option value="FEMALE">Female</option>
+                <option value="MALE">Male</option>
+                <option value="OTHER">Other</option>
+              </select>
+            </div>
           </div>
 
           <div className={styles.formGroup}>

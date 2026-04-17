@@ -53,7 +53,8 @@ export default async function Insights() {
     avg_sugar: averageSugar,
     age: user?.age || null,
     weight: latestWeightValue,
-    height_cm: 170, // Standard default or profile height
+    height_cm: user?.height ? parseFloat(user.height.toString()) : null,
+    gender: user?.gender || null,
   };
 
   return (

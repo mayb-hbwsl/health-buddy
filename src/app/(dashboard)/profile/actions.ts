@@ -15,7 +15,9 @@ export async function updateProfile(formData: FormData) {
 
   const name = formData.get('name') as string;
   const age = formData.get('age') ? parseInt(formData.get('age') as string) : null;
+  const gender = formData.get('gender') as string;
   const weight = formData.get('weight') ? parseFloat(formData.get('weight') as string) : null;
+  const height = formData.get('height') ? parseInt(formData.get('height') as string) : null;
   const condition = formData.get('condition') as string;
   const lastPeriodDate = formData.get('lastPeriodDate') as string | null;
   const cycleLength = formData.get('cycleLength')
@@ -27,7 +29,9 @@ export async function updateProfile(formData: FormData) {
     data: {
       name: name || undefined,
       age,
+      gender,
       weight,
+      height,
       condition,
       lastPeriodDate: lastPeriodDate || null,
       cycleLength,

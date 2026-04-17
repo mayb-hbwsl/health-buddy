@@ -75,6 +75,17 @@ export default async function EditProfile() {
               />
             </div>
 
+            {/* Gender */}
+            <div className={styles.formGroup}>
+              <label htmlFor="gender">Gender</label>
+              <select id="gender" name="gender" defaultValue={user.gender ?? ''} required>
+                <option value="">Select</option>
+                <option value="MALE">Male</option>
+                <option value="FEMALE">Female</option>
+                <option value="OTHER">Other</option>
+              </select>
+            </div>
+
             {/* Weight */}
             <div className={styles.formGroup}>
               <label htmlFor="weight">Weight (kg)</label>
@@ -86,6 +97,21 @@ export default async function EditProfile() {
                 step="0.1"
                 defaultValue={user.weight ?? ''}
                 placeholder="e.g. 70.5"
+              />
+            </div>
+
+            {/* Height */}
+            <div className={styles.formGroup}>
+              <label htmlFor="height">Height (cm)</label>
+              <input
+                id="height"
+                name="height"
+                type="number"
+                min={100}
+                max={250}
+                defaultValue={user.height ?? ''}
+                placeholder="e.g. 165"
+                required
               />
             </div>
 

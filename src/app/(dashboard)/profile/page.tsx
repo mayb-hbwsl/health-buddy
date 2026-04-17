@@ -58,11 +58,19 @@ export default async function Profile() {
             <div className={styles.detailsList}>
               <div className={styles.detailItem}>
                 <span className={styles.detailLabel}>Age</span>
-                <span className={styles.detailValue}>{user?.age || '--'} years</span>
+                <span className={styles.detailValue}>{user?.age ?? '--'} years</span>
+              </div>
+              <div className={styles.detailItem}>
+                <span className={styles.detailLabel}>Gender</span>
+                <span className={styles.detailValue}>{user?.gender ? (user.gender === 'FEMALE' ? 'Female' : (user.gender === 'MALE' ? 'Male' : 'Other')) : 'Not specified'}</span>
               </div>
               <div className={styles.detailItem}>
                 <span className={styles.detailLabel}>Weight</span>
                 <span className={styles.detailValue}>{currentWeight} kg</span>
+              </div>
+              <div className={styles.detailItem}>
+                <span className={styles.detailLabel}>Height</span>
+                <span className={styles.detailValue}>{user?.height ?? '--'} cm</span>
               </div>
               <div className={styles.detailItem}>
                 <span className={styles.detailLabel}>Primary Condition</span>

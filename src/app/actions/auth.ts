@@ -8,6 +8,8 @@ export async function signup(formData: FormData) {
     const name = formData.get("name") as string;
     const email = formData.get("email") as string;
     const password = formData.get("password") as string;
+    const height = formData.get("height") ? Number(formData.get("height")) : null;
+    const gender = formData.get("gender") as string;
 
     if (!email || !password) {
       return { error: "Email and password are required" };
@@ -28,6 +30,8 @@ export async function signup(formData: FormData) {
         name,
         email,
         password: hashedPassword,
+        height,
+        gender,
       },
     });
 
