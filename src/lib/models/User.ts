@@ -7,6 +7,8 @@ export interface IUser extends Document {
   password?: string | null;
   age?: number | null;
   weight?: number | null;
+  height?: number | null;
+  gender?: string | null;
   condition?: string | null;
   lastPeriodDate?: string | null;
   cycleLength?: number | null;
@@ -19,6 +21,8 @@ const UserSchema = new Schema<IUser>(
     password: { type: String, default: null },
     age: { type: Number, default: null },
     weight: { type: Number, default: null },
+    height: { type: Number, default: null },
+    gender: { type: String, default: null },
     condition: { type: String, default: null },
     lastPeriodDate: { type: String, default: null },
     cycleLength: { type: Number, default: 28 },

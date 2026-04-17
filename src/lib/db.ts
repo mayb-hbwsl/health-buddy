@@ -47,6 +47,8 @@ export interface User {
   password?: string | null;
   age?: number | null;
   weight?: number | null;
+  height?: number | null;
+  gender?: string | null;
   condition?: string | null;
   lastPeriodDate?: string | null;
   cycleLength?: number | null;
@@ -70,6 +72,8 @@ function toUser(doc: any): User {
     password: doc.password ?? null,
     age: doc.age ?? null,
     weight: doc.weight ?? null,
+    height: doc.height ?? null,
+    gender: doc.gender ?? null,
     condition: doc.condition ?? null,
     lastPeriodDate: doc.lastPeriodDate ?? null,
     cycleLength: doc.cycleLength ?? null,

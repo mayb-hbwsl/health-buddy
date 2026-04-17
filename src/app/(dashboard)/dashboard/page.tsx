@@ -7,6 +7,8 @@ import { authOptions } from "@/lib/auth";
 import { redirect } from 'next/navigation';
 import HealthChart from '@/components/HealthChart';
 import CycleTracker from '@/components/CycleTracker.client';
+import PredictiveInsights from '@/components/PredictiveInsights.client';
+import { SugarReading } from '@/lib/ml';
 
 export default async function Dashboard() {
   const session = await getServerSession(authOptions);
@@ -35,14 +37,17 @@ export default async function Dashboard() {
 
   const isSugarHigh = latestSugar && parseFloat(latestSugar.value) > 140;
 
-  // Prepare chart data for sugar entries (last 10)
-  const sugarChartData = entries
+  // Prepare readings for ML service
+  const sugarReadings: SugarReading[] = entries
     .filter(e => e.type === "SUGAR")
     .map(e => ({
-      date: e.date.toISOString(),
-      value: parseFloat(e.value)
+      value: parseFloat(e.value),
+      date: e.date.toISOString()
     }))
-    .slice(-10);
+    .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
+
+  // Prepare chart data for sugar entries (last 10)
+  const sugarChartData = sugarReadings.slice(-10);
 
   // Prepare chart data for weight entries (last 10)
   const weightChartData = entries
@@ -93,6 +98,12 @@ export default async function Dashboard() {
             lastPeriodDate={user?.lastPeriodDate ?? null}
             cycleLength={user?.cycleLength ?? 28}
           />
+        </Card>
+      </div>
+
+      <div style={{ marginBottom: '2rem' }}>
+        <Card title="AI Predictive Analysis">
+          <PredictiveInsights sugarReadings={sugarReadings} />
         </Card>
       </div>
 

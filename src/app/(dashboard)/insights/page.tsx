@@ -5,7 +5,15 @@ import db from '@/lib/db';
 import { getServerSession } from 'next-auth/next';
 import { authOptions } from "@/lib/auth";
 import { redirect } from 'next/navigation';
+import DiabetesRiskResults from '@/components/DiabetesRiskResults.client';
+import { RiskRequest } from '@/lib/ml';
 
+/**
+ * Insights Page — Server Component
+ * 
+ * Provides AI-driven analysis of user health data.
+ * Renamed variables to definitively avoid any naming collisions or staleness issues.
+ */
 export default async function Insights() {
   const session = await getServerSession(authOptions);
   
@@ -13,29 +21,40 @@ export default async function Insights() {
     redirect('/auth/login');
   }
 
+  // 1. Fetch data
   const user = await db.user.findUnique({
     where: { id: session.user.id }
   });
 
-  const entries = await db.healthEntry.findMany({
+  const allHealthLogs = await db.healthEntry.findMany({
     where: { userId: session.user.id }
   });
 
-  const hba1cEntries = entries.filter(e => e.type === "HBA1C");
-  const latestHba1c = hba1cEntries.length > 0 
-    ? [...hba1cEntries].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())[0]
+  // 2. Fragment and Analyze
+  const clinicalHba1cLogs = allHealthLogs.filter(e => e.type === "HBA1C");
+  const clinicalSugarLogs = allHealthLogs.filter(e => e.type === "SUGAR");
+  const clinicalWeightLogs = allHealthLogs.filter(e => e.type === "WEIGHT");
+
+  const latestHba1c = clinicalHba1cLogs.length > 0 
+    ? [...clinicalHba1cLogs].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())[0]
     : null;
 
-  const sugarEntries = entries.filter(e => e.type === "SUGAR");
-  const weightEntries = entries.filter(e => e.type === "WEIGHT");
-
-  const averageSugar = sugarEntries.length > 0
-    ? sugarEntries.reduce((acc, curr) => acc + parseFloat(curr.value), 0) / sugarEntries.length
+  const averageSugar = clinicalSugarLogs.length > 0
+    ? clinicalSugarLogs.reduce((acc, curr) => acc + parseFloat(curr.value), 0) / clinicalSugarLogs.length
     : null;
 
-  const latestWeight = weightEntries.length > 0 
-    ? [...weightEntries].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())[0].value 
-    : user?.weight;
+  const latestWeightValue = clinicalWeightLogs.length > 0 
+    ? parseFloat([...clinicalWeightLogs].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())[0].value)
+    : (user?.weight ? parseFloat(user.weight.toString()) : null);
+
+  // 3. Prepare AI request parameters
+  const riskAssessmentData: RiskRequest = {
+    hba1c: latestHba1c ? parseFloat(latestHba1c.value) : null,
+    avg_sugar: averageSugar,
+    age: user?.age || null,
+    weight: latestWeightValue,
+    height_cm: 170, // Standard default or profile height
+  };
 
   return (
     <div className={styles.insights}>
@@ -45,6 +64,14 @@ export default async function Insights() {
       </header>
 
       <div className={styles.insightsList}>
+        {/* ML AI Health Analysis Section */}
+        <div style={{ marginBottom: '2rem' }}>
+          <Card title="ML AI Health Analysis">
+            <DiabetesRiskResults userData={riskAssessmentData} />
+          </Card>
+        </div>
+
+        {/* Current Health Summary Card */}
         <Card title="Current Health Summary" className={styles.insightCard}>
           <div className={styles.summaryGrid}>
             <div className={styles.summaryItem}>
@@ -60,6 +87,7 @@ export default async function Insights() {
           </div>
         </Card>
 
+        {/* Traditional Data Analysis Section */}
         <Card title="Data Analysis" className={styles.recommendCard}>
           <div className={styles.recommendation}>
             <div className={styles.recIcon}>🩸</div>
@@ -83,10 +111,11 @@ export default async function Insights() {
           </div>
         </Card>
 
-        <Card title="AI Analysis" className={styles.aiCard}>
+        {/* AI Narrative Section */}
+        <Card title="AI Narrative Analysis" className={styles.aiCard}>
           <div className={styles.aiContent}>
             {latestHba1c ? (
-              <p>With an HbA1c of {latestHba1c.value}%, our AI suggests focusing on consistent fiber intake. Your current weight is stable at {latestWeight}kg.</p>
+              <p>With an HbA1c of {latestHba1c.value}%, our AI suggests focusing on consistent fiber intake. Your current weight is stable at {latestWeightValue ?? '--'}kg.</p>
             ) : (
               <p>Welcome! We suggest logging your first HbA1c value to provide a comprehensive analysis of your PCOS and Diabetes risk markers for your age ({user?.age}).</p>
             )}

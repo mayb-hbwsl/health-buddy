@@ -1,0 +1,129 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.predictionBox {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 1.5rem;
+  transition: transform 0.2s ease;
+}
+
+.predictionBox:hover {
+  transform: translateY(-2px);
+  border-color: var(--primary);
+}
+
+.label {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  font-weight: 600;
+  text-transform: uppercase;
+  margin-bottom: 0.5rem;
+}
+
+.valueArea {
+  display: flex;
+  align-items: baseline;
+  gap: 0.5rem;
+}
+
+.value {
+  font-size: 2.5rem;
+  font-weight: 800;
+}
+
+.unit {
+  font-size: 1.1rem;
+  color: var(--text-secondary);
+  font-weight: 500;
+}
+
+.trendBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.25rem 0.65rem;
+  border-radius: 20px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  margin-top: 0.75rem;
+}
+
+.rising {
+  background: rgba(239, 68, 68, 0.15);
+  color: #f87171;
+  border: 1px solid rgba(239, 68, 68, 0.3);
+}
+
+.falling {
+  background: rgba(34, 197, 94, 0.15);
+  color: #4ade80;
+  border: 1px solid rgba(34, 197, 94, 0.3);
+}
+
+.stable {
+  background: rgba(99, 102, 241, 0.15);
+  color: #818cf8;
+  border: 1px solid rgba(99, 102, 241, 0.3);
+}
+
+.alert {
+  margin-top: 1rem;
+  padding: 0.85rem;
+  background: rgba(239, 68, 68, 0.1);
+  border-left: 4px solid #ef4444;
+  color: #fca5a5;
+  font-size: 0.9rem;
+  border-radius: 4px;
+}
+
+.forecast {
+  margin-top: 1.5rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--border);
+}
+
+.forecastTitle {
+  font-size: 0.9rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
+}
+
+.forecastGrid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 0.5rem;
+}
+
+.forecastDay {
+  text-align: center;
+}
+
+.dayLabel {
+  display: block;
+  font-size: 0.65rem;
+  color: var(--text-secondary);
+  margin-bottom: 0.25rem;
+}
+
+.dayVal {
+  font-size: 0.85rem;
+  font-weight: 700;
+}
+
+.loading {
+  padding: 2rem;
+  text-align: center;
+  color: var(--text-secondary);
+  animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+  0% { opacity: 0.5; }
+  50% { opacity: 1; }
+  100% { opacity: 0.5; }
+}
