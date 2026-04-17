@@ -58,7 +58,7 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
       <main className={styles.main}>
         <header className={styles.header}>
           <div className={styles.welcome}>
-            Welcome back, <span className="text-gradient">{session?.user?.name || 'User'}</span>
+            Welcome back, <span className="text-gradient">{session?.user?.name || 'User'}!</span>
           </div>
         </header>
         <div className={styles.content}>

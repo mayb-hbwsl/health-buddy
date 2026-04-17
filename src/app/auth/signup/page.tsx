@@ -52,7 +52,7 @@ const Signup: React.FC = () => {
               name="name"
               type="text" 
               className={styles.input} 
-              placeholder="Mayur Srivastav" 
+              placeholder="Anayni" 
               required
             />
           </div>
@@ -63,7 +63,7 @@ const Signup: React.FC = () => {
               name="email"
               type="email" 
               className={styles.input} 
-              placeholder="mayur@example.com" 
+              placeholder="anayni@gmail.com" 
               required
             />
           </div>

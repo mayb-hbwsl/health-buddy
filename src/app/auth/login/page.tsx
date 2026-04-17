@@ -50,7 +50,7 @@ const Login: React.FC = () => {
               name="email"
               type="email" 
               className={styles.input} 
-              placeholder="mayur@example.com" 
+              placeholder="anayni@gmail.com" 
               required
             />
           </div>
