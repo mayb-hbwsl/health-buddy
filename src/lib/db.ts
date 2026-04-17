@@ -1,6 +1,44 @@
 /**
- * Mock database interface to replace Prisma with persistence across hot reloads.
+ * Real MongoDB database client using Mongoose.
+ * Exposes the same db.user.* / db.healthEntry.* interface as the old mock
+ * so zero changes are needed in page or action files.
  */
+
+import mongoose from 'mongoose';
+import UserModel from './models/User';
+import HealthEntryModel from './models/HealthEntry';
+
+// ── Connection (singleton / hot-reload safe) ─────────────────────────────────
+
+const MONGODB_URI = process.env.MONGODB_URI!;
+
+if (!MONGODB_URI) {
+  throw new Error('Please define MONGODB_URI in your .env file');
+}
+
+// Attach a connection cache to the global object so it survives Next.js hot reloads
+const globalForMongoose = global as unknown as {
+  mongooseConn: typeof mongoose | null;
+  mongoosePromise: Promise<typeof mongoose> | null;
+};
+
+if (!globalForMongoose.mongooseConn) globalForMongoose.mongooseConn = null;
+if (!globalForMongoose.mongoosePromise) globalForMongoose.mongoosePromise = null;
+
+async function connectDB() {
+  if (globalForMongoose.mongooseConn) return globalForMongoose.mongooseConn;
+
+  if (!globalForMongoose.mongoosePromise) {
+    globalForMongoose.mongoosePromise = mongoose.connect(MONGODB_URI, {
+      bufferCommands: false,
+    });
+  }
+
+  globalForMongoose.mongooseConn = await globalForMongoose.mongoosePromise;
+  return globalForMongoose.mongooseConn;
+}
+
+// ── Shared shape for User returned by the db API ─────────────────────────────
 
 export interface User {
   id: string;
@@ -23,65 +61,77 @@ export interface HealthEntry {
   date: Date;
 }
 
-// Persist data across hot reloads in development
-const globalForDb = global as unknown as {
-  mockUsers: User[];
-  mockEntries: HealthEntry[];
-};
-
-if (!globalForDb.mockUsers) {
-  globalForDb.mockUsers = [
-    {
-      id: "user_1",
-      name: "Mayur Srivastav",
-      email: "[EMAIL_ADDRESS]",
-      password: "[PASSWORD]",
-      age: 21,
-      weight: 72,
-      condition: "None",
-      lastPeriodDate: null,
-      cycleLength: 28,
-    }
-  ];
+// Helper: convert a Mongoose User doc → plain User object
+function toUser(doc: any): User {
+  return {
+    id: doc._id.toString(),
+    name: doc.name ?? null,
+    email: doc.email,
+    password: doc.password ?? null,
+    age: doc.age ?? null,
+    weight: doc.weight ?? null,
+    condition: doc.condition ?? null,
+    lastPeriodDate: doc.lastPeriodDate ?? null,
+    cycleLength: doc.cycleLength ?? null,
+  };
 }
 
-if (!globalForDb.mockEntries) {
-  globalForDb.mockEntries = [];
+// Helper: convert a Mongoose HealthEntry doc → plain HealthEntry object
+function toEntry(doc: any): HealthEntry {
+  return {
+    id: doc._id.toString(),
+    userId: doc.userId,
+    type: doc.type,
+    value: doc.value,
+    status: doc.status ?? null,
+    date: doc.date,
+  };
 }
 
-const mockUsers = globalForDb.mockUsers;
-const mockEntries = globalForDb.mockEntries;
+// ── db API ───────────────────────────────────────────────────────────────────
 
 export const db = {
   user: {
-    findUnique: async ({ where }: { where: { email?: string; id?: string } }) => {
-      if (where.email) return mockUsers.find(u => u.email === where.email) || null;
-      if (where.id) return mockUsers.find(u => u.id === where.id) || null;
-      return null;
-    },
-    create: async ({ data }: { data: any }) => {
-      const newUser = { id: `user_${Date.now()}`, ...data };
-      mockUsers.push(newUser);
-      return newUser;
-    },
-    update: async ({ where, data }: { where: { id: string }; data: any }) => {
-      const index = mockUsers.findIndex(u => u.id === where.id);
-      if (index !== -1) {
-        mockUsers[index] = { ...mockUsers[index], ...data };
-        return mockUsers[index];
+    async findUnique({ where }: { where: { email?: string; id?: string } }): Promise<User | null> {
+      await connectDB();
+      let doc = null;
+      if (where.email) {
+        doc = await UserModel.findOne({ email: where.email });
+      } else if (where.id) {
+        doc = await UserModel.findById(where.id).catch(() => null);
       }
-      return null;
+      return doc ? toUser(doc) : null;
     },
-    count: async () => mockUsers.length,
+
+    async create({ data }: { data: any }): Promise<User> {
+      await connectDB();
+      const doc = await UserModel.create(data);
+      return toUser(doc);
+    },
+
+    async update({ where, data }: { where: { id: string }; data: any }): Promise<User | null> {
+      await connectDB();
+      const doc = await UserModel.findByIdAndUpdate(where.id, data, { new: true }).catch(() => null);
+      return doc ? toUser(doc) : null;
+    },
+
+    async count(): Promise<number> {
+      await connectDB();
+      return UserModel.countDocuments();
+    },
   },
+
   healthEntry: {
-    findMany: async ({ where }: { where: { userId: string } }) => {
-      return mockEntries.filter(e => e.userId === where.userId);
+    async findMany({ where }: { where: { userId: string } }): Promise<HealthEntry[]> {
+      await connectDB();
+      const docs = await HealthEntryModel.find({ userId: where.userId }).sort({ date: -1 });
+      return docs.map(toEntry);
     },
-    create: async ({ data }: { data: any }) => {
-      const newEntry = { id: `entry_${Date.now()}`, ...data };
-      mockEntries.push(newEntry);
-      return newEntry;
+
+    async create({ data }: { data: any }): Promise<HealthEntry> {
+      await connectDB();
+      const doc = await HealthEntryModel.create(data);
+      return toEntry(doc);
     },
   },
 };
