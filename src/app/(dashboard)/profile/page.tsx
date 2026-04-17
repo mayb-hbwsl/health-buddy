@@ -1,4 +1,5 @@
 import React from 'react';
+import Link from 'next/link';
 import Card from '@/components/Card';
 import Button from '@/components/Button';
 import styles from './profile.module.css';
@@ -68,9 +69,11 @@ export default async function Profile() {
                 <span className={styles.detailValue}>{user?.condition || 'Not specified'}</span>
               </div>
             </div>
-            <Button variant="secondary" fullWidth style={{ marginTop: '20px' }}>
-              Edit Profile
-            </Button>
+            <Link href="/profile/edit" style={{ display: 'block', marginTop: '20px' }}>
+              <Button variant="secondary" fullWidth>
+                Edit Profile
+              </Button>
+            </Link>
           </Card>
 
           <Card title="Account Settings" style={{ marginTop: '30px' }}>

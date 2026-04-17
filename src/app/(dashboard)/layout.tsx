@@ -1,73 +1,30 @@
-"use client";
-
+// Server Component — fetches the latest user name from the DB on every request
+// so "Welcome back" always reflects the most recent name, even after editing.
 import React from 'react';
-import Link from 'next/link';
-import { usePathname } from 'next/navigation';
-import { signOut, useSession } from 'next-auth/react';
-import styles from './layout.module.css';
-import ChatWidget from '@/components/ChatWidget.client';
+import { getServerSession } from 'next-auth/next';
+import { authOptions } from '@/lib/auth';
+import { redirect } from 'next/navigation';
+import db from '@/lib/db';
+import DashboardLayoutClient from './DashboardLayoutClient';
 
 interface DashboardLayoutProps {
   children: React.ReactNode;
 }
 
-const navItems = [
-  { name: 'Dashboard', path: '/dashboard', icon: '📊' },
-  { name: 'Upload Reports', path: '/upload', icon: '📤' },
-  { name: 'Health Insights', path: '/insights', icon: '🧠' },
-  { name: 'All Reports', path: '/reports', icon: '📋' },
-  { name: 'Profile', path: '/profile', icon: '👤' },
-];
+export default async function DashboardLayout({ children }: DashboardLayoutProps) {
+  const session = await getServerSession(authOptions);
 
-export default function DashboardLayout({ children }: DashboardLayoutProps) {
-  const pathname = usePathname();
-  const { data: session } = useSession();
+  if (!session?.user?.id) {
+    redirect('/auth/login');
+  }
+
+  // Always read the freshest name from the DB, not from the stale JWT
+  const user = await db.user.findUnique({ where: { id: session.user.id } });
+  const userName = user?.name || session.user.name || 'User';
 
   return (
-    <div className={styles.layout}>
-      {/* Sidebar */}
-      <aside className={styles.sidebar}>
-        <div className={styles.sidebarHeader}>
-          <Link href="/dashboard" className={styles.logo}>
-            HealthBuddy
-          </Link>
-        </div>
-
-        <nav className={styles.nav}>
-          {navItems.map((item) => (
-            <Link
-              key={item.path}
-              href={item.path}
-              className={`${styles.navItem} ${pathname === item.path ? styles.active : ''}`}
-            >
-              <span className={styles.icon}>{item.icon}</span>
-              <span className={styles.name}>{item.name}</span>
-            </Link>
-          ))}
-        </nav>
-
-        <div className={styles.sidebarFooter}>
-          <button onClick={() => signOut({ callbackUrl: '/' })} className={styles.logoutBtn}>
-            <span className={styles.icon}>🚪</span>
-            <span className={styles.name}>Logout</span>
-          </button>
-        </div>
-      </aside>
-
-      {/* Main Content */}
-      <main className={styles.main}>
-        <header className={styles.header}>
-          <div className={styles.welcome}>
-            Welcome back, <span className="text-gradient">{session?.user?.name || 'User'}!</span>
-          </div>
-        </header>
-        <div className={styles.content}>
-          <div className="container">
-            {children}
-          </div>
-        </div>
-      </main>
-      <ChatWidget />
-    </div>
+    <DashboardLayoutClient userName={userName}>
+      {children}
+    </DashboardLayoutClient>
   );
 }
